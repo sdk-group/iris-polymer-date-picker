@@ -1,0 +1,22 @@
+{
+  "name": "iris-polymer-date-picker",
+  "description": "simple date picker",
+  "main": "iris-date-picker.html",
+  "moduleType": [],
+  "keywords": [
+    "date",
+    "picker"
+  ],
+  "authors": [
+    "SS"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
