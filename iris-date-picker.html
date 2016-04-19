@@ -1,0 +1,86 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="iris-date-picker">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      
+      .day-wrapper {
+        width: 48px;
+        height: 48px;
+        text-align: center;
+      }
+      
+      td[selected] {
+        border-radius: 50%;
+        background: beige;
+      }
+    </style>
+    <div class="year">
+      <paper-icon-button icon="chevron-left" on-tap="previousMonth"></paper-icon-button>
+      [[toYear(date)]], [[toMonth(date)]]
+      <paper-icon-button icon="chevron-right" on-tap="nextMonth"></paper-icon-button>
+    </div>
+    <table class="month">
+      <template is="dom-repeat" items="[[month]]" as="week">
+        <tr class="week-row">
+          <template is="dom-repeat" items="[[week]]" as="day">
+            <td selected$="[[isSelected(selected,day.date)]]" class="day-wrapper" on-tap="daySelected">
+              <span>[[day.label]]</span>
+            </td>
+          </template>
+        </tr>
+      </template>
+    </table>
+
+  </template>
+  <script>
+    'use strict'
+    Polymer({
+      is: 'iris-date-picker',
+      properties: {
+        date: {
+          type: String,
+          value: function() {
+            return moment().format();
+          }
+        },
+        selected: {
+          type: String,
+          notify: true
+        }
+      },
+      isSelected(selected, day_date) {
+        return selected == day_date;
+      },
+      toMonth(date) {
+        return moment(date).format('MMMM');
+      },
+      toYear(date) {
+        return moment(date).format('YY');
+      },
+      ready() {
+        let m = moment(this.date);
+        let daysInMonth = m.daysInMonth();
+        let offset = m.date(1).weekday();
+
+        let month = _.chunk(_.concat(_.fill(Array(offset), {
+          blank: true
+        }), _.map(_.range(1, daysInMonth + 1), d => ({
+          label: d,
+          date: m.date(d).format('YYYY-MM-DD')
+        }))), 7);
+
+        this.set('month', month);
+      },
+      daySelected(e) {
+        console.log(e);
+        let day = e.model.day;
+        this.set('selected', day.date);
+        this.fire('date-selected', day);
+      }
+    });
+  </script>
+</dom-module>
