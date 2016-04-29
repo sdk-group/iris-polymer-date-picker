@@ -6,13 +6,13 @@
       :host {
         display: block;
       }
-      
+
       .day-wrapper {
         width: 48px;
         height: 48px;
         text-align: center;
       }
-      
+
       td[selected] {
         border-radius: 50%;
         background: beige;
@@ -27,7 +27,7 @@
       <template is="dom-repeat" items="[[month]]" as="week">
         <tr class="week-row">
           <template is="dom-repeat" items="[[week]]" as="day">
-            <td selected$="[[isSelected(selected,day.date)]]" class="day-wrapper" on-tap="daySelected">
+            <td selected$="[[isSelected(day.date,selections)]]" class="day-wrapper" on-tap="daySelected">
               <span>[[day.label]]</span>
             </td>
           </template>
@@ -50,10 +50,23 @@
         selected: {
           type: String,
           notify: true
+        },
+        multiselect: {
+          type: Boolean,
+          value: false
+        },
+        selectionsCount: {
+          type: Number,
+          value: 2
+        },
+        selections: {
+          type: Array,
+          value: [],
+          notify: true
         }
       },
-      isSelected(selected, day_date) {
-        return selected == day_date;
+      isSelected(day_date, selections) {
+        return _.isArray(selections) && !!~selections.indexOf(day_date);
       },
       toMonth(date) {
         return moment(date).format('MMMM');
@@ -76,9 +89,17 @@
         this.set('month', month);
       },
       daySelected(e) {
-        console.log(e);
         let day = e.model.day;
-        this.set('selected', day.date);
+        if (!this.multiselect) {
+          this.set('selected', day.date);
+          this.set('selections', [day.date]);
+        } else {
+          let selections = _.clone(this.selections) || [];
+          selections.push(day.date);
+          if (this.selectionsCount)
+            selections = _.takeRight(selections, this.selectionsCount);
+          this.set('selections', selections);
+        }
         this.fire('date-selected', day);
       }
     });
