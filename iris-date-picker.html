@@ -17,10 +17,21 @@
         border-radius: 50%;
         background: beige;
       }
+
+      .year {
+        text-align: center;
+        background-color: var(--mydoc-beige-1000);
+        color: white;
+      }
+
+      .year-label {
+        min-width: 150px;
+        display: inline-block;
+      }
     </style>
     <div class="year">
       <paper-icon-button icon="chevron-left" on-tap="previousMonth"></paper-icon-button>
-      [[toYear(date)]], [[toMonth(date)]]
+      <span class="year-label">  [[toYear(date)]], [[toMonth(date)]] </span>
       <paper-icon-button icon="chevron-right" on-tap="nextMonth"></paper-icon-button>
     </div>
     <table class="month">
