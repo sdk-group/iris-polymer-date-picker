@@ -56,7 +56,8 @@
           type: String,
           value: function() {
             return moment().format();
-          }
+          },
+          observer: '_dateChanged'
         },
         selected: {
           type: String,
@@ -76,6 +77,14 @@
           notify: true
         }
       },
+      previousMonth() {
+        let date = moment(this.date).subtract(1, 'month');
+        this.set('date', date.format());
+      },
+      nextMonth() {
+        let date = moment(this.date).add(1, 'month');
+        this.set('date', date.format());
+      },
       isSelected(day_date, selections) {
         return _.isArray(selections) && !!~selections.indexOf(day_date);
       },
@@ -83,9 +92,9 @@
         return moment(date).format('MMMM');
       },
       toYear(date) {
-        return moment(date).format('YY');
+        return moment(date).format('YYYY');
       },
-      ready() {
+      _dateChanged() {
         let m = moment(this.date);
         let daysInMonth = m.daysInMonth();
         let offset = m.date(1).weekday();
