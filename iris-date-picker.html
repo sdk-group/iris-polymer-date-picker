@@ -2,6 +2,7 @@
 
 <link rel="import" href="../iron-icons/iron-icons.html">
 <link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../paper-styles/paper-styles.html">
 
 <dom-module id="iris-date-picker">
   <template>
@@ -9,26 +10,26 @@
       :host {
         display: block;
       }
-      
+
       .day-wrapper {
         width: 48px;
         height: 48px;
         text-align: center;
       }
-      
+
       td[selected] {
         border-radius: 50%;
         background: var(--mydoc-beige-1000);
         font-weight: 800;
         color: white;
       }
-      
+
       .year {
         text-align: center;
-        background-color: var(--mydoc-beige-1000);
+        background-color: var(--mydoc-beige-1000, --google-blue-500);
         color: white;
       }
-      
+
       .year-label {
         min-width: 150px;
         display: inline-block;
