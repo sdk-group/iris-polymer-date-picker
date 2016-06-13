@@ -10,41 +10,47 @@
       :host {
         display: block;
       }
-
+      
       .day-wrapper {
         width: 48px;
         height: 48px;
         text-align: center;
       }
-
+      
       td[selected] {
         border-radius: 50%;
-        background: var(--mydoc-beige-1000, --google-green-700);
+        background: var(--mydoc-beige-1000, --paper-light-blue-600);
         font-weight: 800;
         color: white;
       }
-
+      
+      td[disabled] {
+        color: grey;
+      }
+      
       .year {
         text-align: center;
         background-color: var(--mydoc-beige-1000, --google-blue-500);
         color: white;
       }
-
+      
       .year-label {
         min-width: 150px;
         display: inline-block;
       }
     </style>
-    <div class="year">
-      <paper-icon-button icon="chevron-left" on-tap="previousMonth"></paper-icon-button>
-      <span class="year-label">  [[toYear(date)]], [[toMonth(date)]] </span>
-      <paper-icon-button icon="chevron-right" on-tap="nextMonth"></paper-icon-button>
-    </div>
+    <template is="dom-if" if="[[!hideMonthPicker]]">
+      <div class="year">
+        <paper-icon-button icon="chevron-left" on-tap="previousMonth"></paper-icon-button>
+        <span class="year-label">  [[toYear(date)]], [[toMonth(date)]] </span>
+        <paper-icon-button icon="chevron-right" on-tap="nextMonth"></paper-icon-button>
+      </div>
+    </template>
     <table class="month">
       <template is="dom-repeat" items="[[month]]" as="week">
         <tr class="week-row">
           <template is="dom-repeat" items="[[week]]" as="day">
-            <td selected$="[[isSelected(day.date,selections)]]" class="day-wrapper" on-tap="daySelected">
+            <td selected$="[[isSelected(day.date,selections)]]" disabled$="{{isDisabled(day.date,disabledDays)}}" class="day-wrapper" on-tap="daySelected">
               <span>[[day.label]]</span>
             </td>
           </template>
@@ -81,7 +87,18 @@
           type: Array,
           value: [],
           notify: true
+        },
+        disabledDays: {
+          type: Array,
+          value: []
+        },
+        hideMonthPicker: {
+          type: Boolean,
+          value: false
         }
+      },
+      isDisabled(date, disabledDays) {
+        return _.isArray(disabledDays) ? !!~disabledDays.indexOf(date) : false;
       },
       previousMonth() {
         let date = moment(this.date).subtract(1, 'month');
@@ -117,6 +134,8 @@
       },
       daySelected(e) {
         let day = e.model.day;
+        if (this.isDisabled(day.date, this.disabledDays)) return false;
+
         if (!this.multiselect) {
           this.set('selected', day.date);
           this.set('selections', [day.date]);
