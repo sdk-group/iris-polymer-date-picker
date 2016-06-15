@@ -10,30 +10,30 @@
       :host {
         display: block;
       }
-      
+
       .day-wrapper {
         width: 48px;
         height: 48px;
         text-align: center;
       }
-      
+
       td[selected] {
         border-radius: 50%;
         background: var(--mydoc-beige-1000, --paper-light-blue-600);
         font-weight: 800;
         color: white;
       }
-      
+
       td[disabled] {
         color: grey;
       }
-      
+
       .year {
         text-align: center;
         background-color: var(--mydoc-beige-1000, --google-blue-500);
         color: white;
       }
-      
+
       .year-label {
         min-width: 150px;
         display: inline-block;
@@ -50,7 +50,7 @@
       <template is="dom-repeat" items="[[month]]" as="week">
         <tr class="week-row">
           <template is="dom-repeat" items="[[week]]" as="day">
-            <td selected$="[[isSelected(day.date,selections)]]" disabled$="{{isDisabled(day.date,disabledDays)}}" class="day-wrapper" on-tap="daySelected">
+            <td selected$="[[isSelected(day.date,selections)]]" disabled$="{{isDisabled(day.date,disabledDays,availableDays)}}" class="day-wrapper" on-tap="daySelected">
               <span>[[day.label]]</span>
             </td>
           </template>
@@ -92,13 +92,19 @@
           type: Array,
           value: []
         },
+        availableDays: {
+          value: false
+        },
         hideMonthPicker: {
           type: Boolean,
           value: false
         }
       },
-      isDisabled(date, disabledDays) {
-        return _.isArray(disabledDays) ? !!~disabledDays.indexOf(date) : false;
+      isDisabled(date, disabledDays, availableDays) {
+        if (_.isArray(disabledDays) && disabledDays.length) return !!~disabledDays.indexOf(date);
+        if (_.isArray(availableDays)) return !~availableDays.indexOf(date);
+
+        return false;
       },
       previousMonth() {
         let date = moment(this.date).subtract(1, 'month');
