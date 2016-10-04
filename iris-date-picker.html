@@ -38,11 +38,14 @@
         min-width: 150px;
         display: inline-block;
       }
+
     </style>
     <template is="dom-if" if="[[!hideMonthPicker]]">
       <div class="year">
         <paper-icon-button icon="chevron-left" on-tap="previousMonth"></paper-icon-button>
-        <span class="year-label">  [[toYear(date)]], [[toMonth(date)]] </span>
+        <span class="year-label">
+          [[toYear(date)]], [[toMonth(date)]]
+        </span>
         <paper-icon-button icon="chevron-right" on-tap="nextMonth"></paper-icon-button>
       </div>
     </template>
@@ -66,7 +69,7 @@
       properties: {
         date: {
           type: String,
-          value: function() {
+          value: function () {
             return moment().format();
           },
           observer: '_dateChanged'
@@ -101,8 +104,10 @@
         }
       },
       isDisabled(date, disabledDays, availableDays) {
-        if (_.isArray(disabledDays) && disabledDays.length) return !!~disabledDays.indexOf(date);
-        if (_.isArray(availableDays)) return !~availableDays.indexOf(date);
+        if (_.isArray(disabledDays) && disabledDays.length)
+          return ! !~ disabledDays.indexOf(date);
+        if (_.isArray(availableDays))
+          return !~ availableDays.indexOf(date);
 
         return false;
       },
@@ -115,7 +120,10 @@
         this.set('date', date.format());
       },
       isSelected(day_date, selections) {
-        return _.isArray(selections) && !!~selections.indexOf(day_date);
+        if (day_date == -1)
+          return false;
+
+        return _.isArray(selections) && ! !~ selections.indexOf(day_date);
       },
       toMonth(date) {
         return moment(date).format('MMMM');
@@ -131,16 +139,14 @@
         let month = _.chunk(_.concat(_.fill(Array(offset), {
           blank: true,
           date: -1
-        }), _.map(_.range(1, daysInMonth + 1), d => ({
-          label: d,
-          date: m.date(d).format('YYYY-MM-DD')
-        }))), 7);
+        }), _.map(_.range(1, daysInMonth + 1), d => ({label: d, date: m.date(d).format('YYYY-MM-DD')}))), 7);
 
         this.set('month', month);
       },
       daySelected(e) {
         let day = e.model.day;
-        if (this.isDisabled(day.date, this.disabledDays)) return false;
+        if (this.isDisabled(day.date, this.disabledDays))
+          return false;
 
         if (!this.multiselect) {
           this.set('selected', day.date);
