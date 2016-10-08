@@ -78,6 +78,12 @@
           type: String,
           notify: true
         },
+        selectionEnabled: {
+          type: Boolean,
+          computed: '_computeAv(selected, disabledDays, availableDays)',
+          value: false,
+          notify: true
+        },
         multiselect: {
           type: Boolean,
           value: false
@@ -143,6 +149,9 @@
 
         this.set('month', month);
       },
+      _computeAv(selected, disabledDays, availableDays) {
+        return !this.isDisabled(selected, disabledDays, availableDays);
+      },
       daySelected(e) {
         let day = e.model.day;
         if (this.isDisabled(day.date, this.disabledDays))
@@ -150,6 +159,7 @@
 
         if (!this.multiselect) {
           this.set('selected', day.date);
+
           this.set('selections', [day.date]);
         } else {
           let selections = _.clone(this.selections) || [];
@@ -159,6 +169,10 @@
           this.set('selections', selections);
         }
         this.fire('date-selected', day);
+      },
+      reset() {
+        this.set('selected', false)
+        this.set('selections', false)
       }
     });
   </script>
