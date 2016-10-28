@@ -69,10 +69,15 @@
       properties: {
         date: {
           type: String,
+          notify: true,
           value: function () {
             return moment().format();
-          },
-          observer: '_dateChanged'
+          }
+        },
+        month: {
+          value: [],
+          type: Array,
+          computed: "_dateChanged(date)"
         },
         selected: {
           type: String,
@@ -147,7 +152,7 @@
           date: -1
         }), _.map(_.range(1, daysInMonth + 1), d => ({label: d, date: m.date(d).format('YYYY-MM-DD')}))), 7);
 
-        this.set('month', month);
+        return month;
       },
       _computeAv(selected, disabledDays, availableDays) {
         return !this.isDisabled(selected, disabledDays, availableDays);
@@ -171,8 +176,10 @@
         this.fire('date-selected', day);
       },
       reset() {
-        this.set('selected', false)
-        this.set('selections', false)
+        this.set('selected', false);
+        this.set('selections', false);
+        this.set('date', moment().format());
+        console.log('date', moment().format());
       }
     });
   </script>
